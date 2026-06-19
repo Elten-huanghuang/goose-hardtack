@@ -1,27 +1,21 @@
 package com.luckgoose.hardtack.command;
-
 import com.luckgoose.hardtack.GooseHardtackMod;
 import com.luckgoose.hardtack.compat.SolCarrotCompat;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-
 import java.util.Collection;
 import java.util.List;
 

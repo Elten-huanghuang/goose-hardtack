@@ -1,5 +1,4 @@
 package com.luckgoose.hardtack.item;
-
 import com.luckgoose.hardtack.compat.RefinedStorageCompat;
 import com.luckgoose.hardtack.compat.RefinedStorageCompat.StorageActionResult;
 import com.luckgoose.hardtack.compat.SolCarrotCompat;
@@ -39,7 +38,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
