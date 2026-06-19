@@ -1,0 +1,38 @@
+# 构建产物
+build/
+bin/
+out/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle
+.gradle/
+gradle-app.setting
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.code-workspace
+.trae/
+
+# Minecraft 运行目录
+run/
+logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+
+# 本地配置
+local.properties
+
+# 临时文件
+*.log
+*.tmp

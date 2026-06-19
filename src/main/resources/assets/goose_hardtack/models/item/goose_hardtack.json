@@ -1,0 +1,33 @@
+{
+  "textures": {
+    "tin": "goose_hardtack:item/goose_food_tin_pixel_metal",
+    "rim": "goose_hardtack:item/goose_food_tin_pixel_rim",
+    "inside": "goose_hardtack:item/goose_food_tin_pixel_inside",
+    "lid": "goose_hardtack:item/goose_food_tin_pixel_lid_open",
+    "label": "goose_hardtack:item/goose_food_tin_pixel_label",
+    "hinge": "goose_hardtack:item/goose_food_tin_pixel_hinge",
+    "particle": "goose_hardtack:item/goose_food_tin_pixel_metal"
+  },
+  "elements": [
+    { "from": [2, 3, 3], "to": [14, 5, 13], "faces": { "north": { "uv": [0, 0, 16, 4], "texture": "#tin" }, "south": { "uv": [0, 0, 16, 4], "texture": "#tin" }, "east": { "uv": [0, 0, 16, 4], "texture": "#tin" }, "west": { "uv": [0, 0, 16, 4], "texture": "#tin" }, "up": { "uv": [0, 0, 16, 16], "texture": "#inside" }, "down": { "uv": [0, 0, 16, 16], "texture": "#tin" } } },
+    { "from": [2, 5, 3], "to": [14, 6, 4], "faces": { "north": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "south": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "east": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "west": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "up": { "uv": [0, 0, 16, 2], "texture": "#rim" }, "down": { "uv": [0, 0, 16, 2], "texture": "#rim" } } },
+    { "from": [2, 5, 12], "to": [14, 6, 13], "faces": { "north": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "south": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "east": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "west": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "up": { "uv": [0, 0, 16, 2], "texture": "#rim" }, "down": { "uv": [0, 0, 16, 2], "texture": "#rim" } } },
+    { "from": [2, 5, 4], "to": [3, 6, 12], "faces": { "north": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "south": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "east": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "west": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "up": { "uv": [0, 0, 2, 16], "texture": "#rim" }, "down": { "uv": [0, 0, 2, 16], "texture": "#rim" } } },
+    { "from": [13, 5, 4], "to": [14, 6, 12], "faces": { "north": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "south": { "uv": [0, 0, 2, 4], "texture": "#rim" }, "east": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "west": { "uv": [0, 0, 16, 4], "texture": "#rim" }, "up": { "uv": [0, 0, 2, 16], "texture": "#rim" }, "down": { "uv": [0, 0, 2, 16], "texture": "#rim" } } },
+    { "from": [2, 6, 13], "to": [14, 14, 14], "faces": { "north": { "uv": [0, 0, 16, 16], "texture": "#lid" }, "south": { "uv": [0, 0, 16, 16], "texture": "#lid" }, "east": { "uv": [0, 0, 2, 16], "texture": "#lid" }, "west": { "uv": [0, 0, 2, 16], "texture": "#lid" }, "up": { "uv": [0, 0, 16, 2], "texture": "#lid" }, "down": { "uv": [0, 0, 16, 2], "texture": "#lid" } } },
+    { "from": [4, 8, 12.9], "to": [12, 12, 13.05], "faces": { "north": { "uv": [0, 0, 16, 16], "texture": "#label" }, "south": { "uv": [0, 0, 16, 16], "texture": "#label" }, "east": { "uv": [0, 0, 1, 16], "texture": "#label" }, "west": { "uv": [0, 0, 1, 16], "texture": "#label" }, "up": { "uv": [0, 0, 16, 1], "texture": "#label" }, "down": { "uv": [0, 0, 16, 1], "texture": "#label" } } },
+    { "from": [3, 6, 12.8], "to": [13, 7, 13.2], "faces": { "north": { "uv": [0, 0, 16, 4], "texture": "#hinge" }, "south": { "uv": [0, 0, 16, 4], "texture": "#hinge" }, "east": { "uv": [0, 0, 2, 4], "texture": "#hinge" }, "west": { "uv": [0, 0, 2, 4], "texture": "#hinge" }, "up": { "uv": [0, 0, 16, 2], "texture": "#hinge" }, "down": { "uv": [0, 0, 16, 2], "texture": "#hinge" } } }
+  ],
+  "display": {
+    "thirdperson_righthand": { "rotation": [65, 35, 0], "translation": [0, 2.2, 0], "scale": [0.48, 0.48, 0.48] },
+    "thirdperson_lefthand": { "rotation": [65, 35, 0], "translation": [0, 2.2, 0], "scale": [0.48, 0.48, 0.48] },
+    "firstperson_righthand": { "rotation": [12, 45, 0], "translation": [0, 1.2, 0], "scale": [0.54, 0.54, 0.54] },
+    "firstperson_lefthand": { "rotation": [12, 45, 0], "translation": [0, 1.2, 0], "scale": [0.54, 0.54, 0.54] },
+    "gui": { "rotation": [30, 225, 0], "translation": [0, -0.4, 0], "scale": [0.78, 0.78, 0.78] },
+    "ground": { "translation": [0, 3, 0], "scale": [0.38, 0.38, 0.38] },
+    "fixed": { "rotation": [0, 180, 0], "scale": [0.72, 0.72, 0.72] }
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1 }, "model": "goose_hardtack:item/goose_hardtack_filled" }
+  ]
+}
