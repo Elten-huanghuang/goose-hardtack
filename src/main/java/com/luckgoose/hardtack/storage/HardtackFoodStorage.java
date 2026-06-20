@@ -288,21 +288,36 @@ public final class HardtackFoodStorage {
 
     /**
      * 消费一个食物并返回
-     * 
+     *
      * <p>从饼干中取出第一个食物（数量 1），更新剩余列表。
      * 如果第一个食物数量 > 1，则减 1 后保留。
-     * 
+     *
+     * <p><b>性能提示：</b>
+     * 在循环中处理多个食物时应使用 {@link #consumeMultiple}——本方法每次调用都做一次完整的
+     * NBT 序列化/反序列化，循环调用会导致 O(n²) 开销。当前仅保留作为单次消费的便捷方法。
+     *
+     * <p><b>死循环防护：</b>
+     * 当所有食物条目因对应 mod 被移除等原因变为无效时（read 返回空列表但 FoodCount 缓存仍 > 0），
+     * 必须调用 {@link #clear} 清理 NBT，否则 {@link HardtackEatingSessions#onPlayerTick}
+     * 中的进食循环会陷入无限循环——hasFoods 检查 FoodCount 认为还有食物，
+     * 但 consumeOne 每次都返回 EMPTY。
+     *
      * @param bag 饼干物品（会被修改）
      * @return 消费的食物 ItemStack（数量为 1），如果饼干为空则返回 EMPTY
+     * @see #consumeMultiple 批量消费（性能优化版本）
      */
     public static ItemStack consumeOne(ItemStack bag) {
         List<Entry> entries = read(bag);
-        if (entries.isEmpty()) return ItemStack.EMPTY;
-        
+        if (entries.isEmpty()) {
+            clear(bag);
+            return ItemStack.EMPTY;
+        }
+
         Entry entry = entries.get(0);
         ItemStack food = createStack(entry, 1);
         if (food.isEmpty()) return ItemStack.EMPTY;
-        
+
+
         // 更新列表
         List<Entry> updated = new ArrayList<>();
         if (entry.count() > 1) {
@@ -315,6 +330,84 @@ public final class HardtackFoodStorage {
         write(bag, updated);
 
         return food;
+    }
+
+    /**
+     * 批量消费食物（性能优化版本）
+     *
+     * <p>从饼干前端按顺序取出最多 {@code maxCount} 个食物，
+     * 整个过程只做一次 NBT 读取和一次 NBT 写入。
+     *
+     * <p><b>性能对比：</b>
+     * 设饼干中有 n 种食物共 m 个。在循环中调用 {@link #consumeOne} 消费全部食物需要
+     * O(m × n) 次 NBT Tag 操作；本方法只需要 O(n) —— 开头读一次，结尾写一次。
+     * 默认配置下（8192 种食物），差异约为 3350 万次 vs 1.6 万次 Tag 操作。
+     *
+     * <p><b>模组兼容性：</b>
+     * 虽然本方法不在每次消费后立即更新 NBT，但这不影响模组兼容性——
+     * 进食流程（HardtackEatingSessions 中的 eat 方法）操作的是食物的副本，不读取饼干的 NBT 状态，
+     * 因此批量消费与逐个消费的行为完全等价。唯一的区别是性能。
+     *
+     * <p><b>消费顺序：</b>
+     * 按 Entry 列表顺序从前到后消费。同一种食物有多个时，先全部吃完再处理下一种。
+     * 这与在循环中调用 consumeOne 的行为一致。
+     *
+     * <p><b>边界情况：</b>
+     * <ul>
+     *   <li>maxCount == 0：返回空列表，不消费任何食物（与原始 while 循环行为一致）</li>
+     *   <li>如果 read 返回空但 FoodCount 缓存 > 0（mod 被移除）：调用 clear 清理并返回空列表</li>
+     *   <li>如果某个条目无法创建 ItemStack（极端情况）：跳过该条目，从剩余列表中移除</li>
+     *   <li>maxCount < 0：消费全部食物</li>
+     *   <li>maxCount > 0：最多消费 maxCount 个（单位：个，非种类）</li>
+     * </ul>
+     *
+     * @param bag 饼干物品（会被修改）
+     * @param maxCount 最多消费的食物数量（< 0 = 全部，0 = 不消费，> 0 = 至多 maxCount 个）
+     * @return 消费的食物 ItemStack 列表（每个数量为 1），无食物时返回空列表
+     * @see #consumeOne 单次消费
+     */
+    public static List<ItemStack> consumeMultiple(ItemStack bag, int maxCount) {
+        if (maxCount == 0) {
+            return List.of();
+        }
+
+        List<Entry> entries = read(bag);
+        if (entries.isEmpty()) {
+            clear(bag);
+            return List.of();
+        }
+
+        List<ItemStack> foods = new ArrayList<>();
+        List<Entry> remaining = new ArrayList<>();
+        int consumed = 0;
+        boolean hasLimit = maxCount > 0;
+
+        for (Entry entry : entries) {
+            if (hasLimit && consumed >= maxCount) {
+                remaining.add(entry);
+                continue;
+            }
+
+            int available = entry.count();
+            int toTake = hasLimit ? Math.min(available, maxCount - consumed) : available;
+
+            for (int i = 0; i < toTake; i++) {
+                ItemStack food = createStack(entry, 1);
+                if (!food.isEmpty()) {
+                    foods.add(food);
+                    consumed++;
+                }
+            }
+
+            int leftover = available - toTake;
+            if (leftover > 0) {
+                remaining.add(entry.withCount(leftover));
+            }
+        }
+
+        // 一次写入全部剩余条目，而非 foods.size() 次
+        write(bag, remaining);
+        return foods;
     }
 
     /**

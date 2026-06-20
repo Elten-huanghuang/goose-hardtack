@@ -140,27 +140,40 @@ public class GooseFoodBagItem extends Item {
 
     /**
      * 完成进食动画后触发
-     * 
+     *
      * <p>在服务端启动进食会话（{@link HardtackEatingSessions}），
      * 该会话会在每个 tick 中批量消费食物并触发 SolCarrot 的进食事件。
-     * 
+     * 会话结束时由 {@link HardtackEatingSessions#onPlayerTick} 发送完成消息和打嗝音效，
+     * 而非在此处提前发送。
+     *
      * @see HardtackEatingSessions#start(ServerPlayer, int)
      */
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (!level.isClientSide && entity instanceof ServerPlayer player) {
             if (hasStoredFoods(stack) && !HardtackEatingSessions.isRunning(player)) {
-                int count = HardtackFoodStorage.getFoodCount(stack);
                 int slot = findBagSlot(player, stack);
                 if (slot >= 0) {
                     HardtackEatingSessions.start(player, slot);
-                    sendShortMessage(player, Component.translatable("item.goose_hardtack.goose_hardtack.message.eaten", count));
                 }
             }
         }
         return stack;
     }
-    
+
+    /**
+     * 物品使用中每 tick 回调。
+     *
+     * <p>将使用时间累积到 HardtackEatingSessions，跨受击中断保留。
+     * 累积达到阈值后直接启动进食会话，不再依赖 finishUsingItem（受击会重置原版使用进度）。
+     */
+    @Override
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseTicks) {
+        if (level.isClientSide || !(entity instanceof ServerPlayer player)) return;
+        if (!hasStoredFoods(stack) || HardtackEatingSessions.isRunning(player)) return;
+        HardtackEatingSessions.accumulateUse(player);
+    }
+
     /**
      * 在玩家背包中查找饼干所在的槽位
      * 
@@ -171,7 +184,7 @@ public class GooseFoodBagItem extends Item {
      * @param targetBag 目标饼干
      * @return 槽位索引，未找到返回 -1
      */
-    private static int findBagSlot(ServerPlayer player, ItemStack targetBag) {
+    public static int findBagSlot(ServerPlayer player, ItemStack targetBag) {
         int fallback = -1;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
@@ -220,6 +233,9 @@ public class GooseFoodBagItem extends Item {
      */
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        boolean shiftDown = level != null && level.isClientSide
+                && net.minecraft.client.gui.screens.Screen.hasShiftDown();
+
         int foodCount = HardtackFoodStorage.getFoodCount(stack);
         if (foodCount <= 0) {
             tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.empty").withStyle(ChatFormatting.DARK_GRAY));
@@ -232,6 +248,15 @@ public class GooseFoodBagItem extends Item {
             tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.eat_time", String.format("%.1f", useSeconds)).withStyle(ChatFormatting.GRAY));
         }
         tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.blacklist").withStyle(ChatFormatting.DARK_GRAY));
+
+        if (shiftDown) {
+            tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.controls.header").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.controls.collect").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.controls.eat").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.controls.blacklist").withStyle(ChatFormatting.GRAY));
+        } else {
+            tooltip.add(Component.translatable("item.goose_hardtack.goose_hardtack.tooltip.shift_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        }
     }
 
     /**

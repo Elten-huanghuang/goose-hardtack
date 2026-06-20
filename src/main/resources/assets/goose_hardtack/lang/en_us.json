@@ -2,9 +2,7 @@
   "itemGroup.goose_hardtack.main": "Goose Hardtack",
   "item.goose_hardtack.goose_hardtack": "Goose Hardtack",
   "item.goose_hardtack.goose_hardtack.message.collected": "Successfully collected %s untasted foods",
-  "item.goose_hardtack.goose_hardtack.message.changed": "Goose Hardtack still holds %s foods",
   "item.goose_hardtack.goose_hardtack.message.eaten": "Ate %s foods and consumed the hardtack",
-  "item.goose_hardtack.goose_hardtack.message.empty": "Goose Hardtack emptied",
   "item.goose_hardtack.goose_hardtack.message.no_food": "No uneaten food could be moved",
   "item.goose_hardtack.goose_hardtack.message.return_failed": "The target storage cannot accept these foods",
   "item.goose_hardtack.goose_hardtack.message.returned": "Successfully returned %s foods, %s remaining",
@@ -17,11 +15,15 @@
   "item.goose_hardtack.goose_hardtack.tooltip.blacklist": "Sneak right-click to open the Goose Hardtack blacklist",
   "item.goose_hardtack.goose_hardtack.auto_eat.hold": "Auto-eating in progress",
   "item.goose_hardtack.goose_hardtack.auto_eat.interrupted": "Auto-eating interrupted",
-  "item.goose_hardtack.goose_hardtack.auto_eat.done": "Auto-eating finished",
   "container.goose_hardtack.goose_hardtack_blacklist": "Goose Hardtack Blacklist",
   "command.goose_hardtack.hardtack.invalid_food": "%s is not a countable food",
   "command.goose_hardtack.hardtack.unlock.food": "Marked %s as eaten for %s/%s players",
   "command.goose_hardtack.hardtack.unlock.all": "Unlocked all countable foods: added %s records for %s players",
   "command.goose_hardtack.hardtack.reset.food": "Marked %s as uneaten for %s/%s players",
-  "command.goose_hardtack.hardtack.reset.all": "Reset all eaten foods: removed %s records for %s players"
+  "command.goose_hardtack.hardtack.reset.all": "Reset all eaten foods: removed %s records for %s players",
+  "item.goose_hardtack.goose_hardtack.tooltip.shift_hint": "Hold Shift for controls",
+  "item.goose_hardtack.goose_hardtack.tooltip.controls.header": "Controls:",
+  "item.goose_hardtack.goose_hardtack.tooltip.controls.collect": "  Left-click container → Collect / Return uneaten foods",
+  "item.goose_hardtack.goose_hardtack.tooltip.controls.eat": "  Hold right-click → Batch eat all stored foods",
+  "item.goose_hardtack.goose_hardtack.tooltip.controls.blacklist": "  Shift + Right-click → Open collection blacklist"
 }

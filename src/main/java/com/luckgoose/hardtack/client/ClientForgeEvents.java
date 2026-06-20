@@ -87,9 +87,8 @@ public class ClientForgeEvents {
 
         // 自动保持模式
         if (autoEatRunning) {
-            // 中断条件检测
+            // 中断条件检测（不检查 keyUse —— 受击会短暂释放按键，由积累计时保证服务端会话不受影响）
             if (player.isShiftKeyDown()) { interruptAutoEat(); return; }
-            if (!minecraft.options.keyUse.isDown()) { interruptAutoEat(); return; }
             if (currentSlot != autoEatTrackedSlot) { interruptAutoEat(); return; }
             if (minecraft.options.keyAttack.isDown()) { interruptAutoEat(); return; }
             if (!isHoldingFoodBagWithFoods(player)) { finishAutoEat(); return; }
@@ -133,9 +132,14 @@ public class ClientForgeEvents {
     }
 
     /**
-     * 中断自动进食（用户主动中断）
-     * 
-     * <p>显示"自动进食状态已中断"消息。
+     * 中断自动进食（用户主动操作）
+     *
+     * <p>由按键事件、切槽位、按攻击键、按 Shift 触发。
+     * 停止客户端按键模拟并显示提示，让玩家知道自动保持已解除。
+     *
+     * <p><b>注意：</b>此方法仅停止客户端按键模拟，<b>不中断服务端的进食会话</b>。
+     * 服务端会继续消费食物直到饼干清空，完毕后发送 {@code message.eaten}
+     * 覆盖本条消息——这是预期行为，玩家最终会看到完成反馈。
      */
     private static void interruptAutoEat() {
         autoEatRunning = false;
@@ -147,23 +151,26 @@ public class ClientForgeEvents {
     }
 
     /**
-     * 完成自动进食（饼干耗尽）
-     * 
-     * <p>显示"自动进食完成"消息。
+     * 完成自动进食（饼干耗尽，客户端侧检测）
+     *
+     * <p>当客户端收到服务端同步的空饼干后触发。
+     * <b>不显示任何消息</b>——服务端在会话结束时发送的 {@code message.eaten}
+     * 已包含食物数量等完整信息，客户端消息只会覆盖它。
+     *
+     * @see com.luckgoose.hardtack.storage.HardtackEatingSessions#onPlayerTick 服务端完成消息的发送位置
      */
     private static void finishAutoEat() {
         autoEatRunning = false;
         foodBagUseTickCount = 0;
         autoEatTrackedSlot = -1;
         Minecraft.getInstance().options.keyUse.setDown(false);
-        ShortStatusMessageClient.show(
-                Component.translatable("item.goose_hardtack.goose_hardtack.auto_eat.done"), 20);
+        // 不发消息——服务端 message.eaten 已提供完整反馈
     }
 
     /**
      * 重置自动进食状态（无消息提示）
      *
-     * <p>与 {@link #interruptAutoEat()} 和 {@link #finishAutoEat()} 不同，此方法不会向玩家显示任何提示消息。
+     * <p>与 {@link #interruptAutoEat()} 不同，此方法不会向玩家显示任何提示消息。
      *
      * <p><b>适用场景：</b>
      * <ul>

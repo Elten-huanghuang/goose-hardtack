@@ -57,29 +57,37 @@ import java.util.List;
  */
 public final class SolCarrotCompat {
 
-    /**
-     * SolCarrot 的 FoodCapability NBT 标签名
-     * 
-     * <p>该标签存储玩家已吃过的食物 ID 列表（字符串数组）。
-     * 如果上游修改序列化格式，resetFood 会安全返回 false 而非崩溃。
-     */
+    /** SolCarrot 的 FoodCapability NBT 标签名 */
     private static final String FOOD_LIST_NBT_KEY = "foodList";
+
+    /**
+     * SolCarrot 是否已加载（懒加载缓存）
+     *
+     * <p>使用 {@link Boolean} 三态：{@code null} = 未检测，{@code true/false} = 已缓存结果。
+     * 同一 JVM 生命周期内 SolCarrot 的有无不发生变化，因此只需检测一次。
+     */
+    private static Boolean available;
 
     private SolCarrotCompat() {
     }
 
     /**
      * 检查 SolCarrot mod 是否已加载
-     * 
+     *
+     * <p>首次调用时通过 {@link Class#forName} 检测并缓存结果，
+     * 后续调用直接返回缓存值，避免每次 tooltip 渲染都做 class lookup。
+     *
      * @return 如果 SolCarrot 可用返回 true
      */
     public static boolean isAvailable() {
+        if (available != null) return available;
         try {
             Class.forName("com.cazsius.solcarrot.SOLCarrot");
-            return true;
+            available = true;
         } catch (ClassNotFoundException e) {
-            return false;
+            available = false;
         }
+        return available;
     }
 
     /**
